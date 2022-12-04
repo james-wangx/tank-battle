@@ -3,10 +3,35 @@ package cn.edu.jou.tankbattle;
 public class Tank {
     private int x; // 坦克的横坐标
     private int y; // 坦克的纵坐标
+    private int speed; // 坦克的速度
+    private int direct; // 坦克的方向 0 上，1 右，2 下，3 左
 
     public Tank(int x, int y) {
         this.x = x;
         this.y = y;
+        speed = 1;
+    }
+
+    public Tank(int x, int y, int speed) {
+        this.x = x;
+        this.y = y;
+        this.speed = speed;
+    }
+
+    public void moveUp() {
+        y -= speed;
+    }
+
+    public void moveRight() {
+        x += speed;
+    }
+
+    public void moveDown() {
+        y += speed;
+    }
+
+    public void moveLeft() {
+        x -= speed;
     }
 
     public int getX() {
@@ -23,5 +48,21 @@ public class Tank {
 
     public void setY(int y) {
         this.y = y;
+    }
+
+    public int getSpeed() {
+        return speed;
+    }
+
+    public void setSpeed(int speed) {
+        this.speed = speed;
+    }
+
+    public int getDirect() {
+        return direct;
+    }
+
+    public void setDirect(int direct) {
+        this.direct = direct;
     }
 }
