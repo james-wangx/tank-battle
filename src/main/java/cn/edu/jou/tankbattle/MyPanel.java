@@ -4,22 +4,33 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.Vector;
 
 /**
  * 坦克大战的绘图区
  */
 public class MyPanel extends JPanel implements KeyListener {
-    Hero hero; // 定义自己的坦克
+    private final HeroTank heroTank; // 自己的坦克
+    private final Vector<EnemyTank> enemyTanks = new Vector<>(); // 敌人的坦克
+    private final int enemyTankSize = 3; // 敌人坦克的数量
 
     public MyPanel() {
-        hero = new Hero(100, 100, 5); // 初始化自己的坦克
+        heroTank = new HeroTank(100, 200, 5); // 初始化自己的坦克
+        for (int i = 0; i < enemyTankSize; i++) { // 初始化敌人的坦克
+            EnemyTank enemyTank = new EnemyTank((i + 1) * 100, 0, 5);
+            enemyTank.setDirect(2); // 设置坦克方向
+            enemyTanks.add(enemyTank);
+        }
     }
 
     @Override
     public void paint(Graphics g) {
         super.paint(g);
         g.fillRect(0, 0, 1000, 750); // 填充矩形，默认黑色
-        drawTank(hero.getX(), hero.getY(), g, hero.getDirect(), 1); // 画坦克
+        drawTank(heroTank.getX(), heroTank.getY(), g, heroTank.getDirect(), 1); // 画自己的坦克
+        for (EnemyTank enemyTank : enemyTanks) { // 画敌人的坦克
+            drawTank(enemyTank.getX(), enemyTank.getY(), g, enemyTank.getDirect(), 0);
+        }
     }
 
     /**
@@ -91,17 +102,17 @@ public class MyPanel extends JPanel implements KeyListener {
     @Override
     public void keyPressed(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_W) {
-            hero.setDirect(0);
-            hero.moveUp();
+            heroTank.setDirect(0);
+            heroTank.moveUp();
         } else if (e.getKeyCode() == KeyEvent.VK_D) {
-            hero.setDirect(1);
-            hero.moveRight();
+            heroTank.setDirect(1);
+            heroTank.moveRight();
         } else if (e.getKeyCode() == KeyEvent.VK_S) {
-            hero.setDirect(2);
-            hero.moveDown();
+            heroTank.setDirect(2);
+            heroTank.moveDown();
         } else if (e.getKeyCode() == KeyEvent.VK_A) {
-            hero.setDirect(3);
-            hero.moveLeft();
+            heroTank.setDirect(3);
+            heroTank.moveLeft();
         }
         repaint();
     }
