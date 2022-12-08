@@ -15,9 +15,9 @@ public class MyPanel extends JPanel implements KeyListener {
     private final int enemyTankSize = 3; // 敌人坦克的数量
 
     public MyPanel() {
-        heroTank = new HeroTank(100, 200, 5); // 初始化自己的坦克
+        heroTank = new HeroTank(100, 100, 10); // 初始化自己的坦克
         for (int i = 0; i < enemyTankSize; i++) { // 初始化敌人的坦克
-            EnemyTank enemyTank = new EnemyTank((i + 1) * 100, 0, 5);
+            EnemyTank enemyTank = new EnemyTank((i + 1) * 100, 0, 10);
             enemyTank.setDirect(2); // 设置坦克方向
             enemyTanks.add(enemyTank);
         }
@@ -95,25 +95,30 @@ public class MyPanel extends JPanel implements KeyListener {
     }
 
     /**
-     * 处理方向键：WASD 按下的情况
+     * 处理键盘按下的情况
      *
      * @param e 键盘事件
      */
     @Override
     public void keyPressed(KeyEvent e) {
-        if (e.getKeyCode() == KeyEvent.VK_W) {
+        int keyCode = e.getKeyCode();
+        if (keyCode == KeyEvent.VK_W) {
             heroTank.setDirect(0);
             heroTank.moveUp();
-        } else if (e.getKeyCode() == KeyEvent.VK_D) {
+        } else if (keyCode == KeyEvent.VK_D) {
             heroTank.setDirect(1);
             heroTank.moveRight();
-        } else if (e.getKeyCode() == KeyEvent.VK_S) {
+        } else if (keyCode == KeyEvent.VK_S) {
             heroTank.setDirect(2);
             heroTank.moveDown();
-        } else if (e.getKeyCode() == KeyEvent.VK_A) {
+        } else if (keyCode == KeyEvent.VK_A) {
             heroTank.setDirect(3);
             heroTank.moveLeft();
+        } else if (keyCode == KeyEvent.VK_J) {
+            System.out.println("用户按下了J，开始射击");
+            heroTank.shotEnemy();
         }
+
         repaint();
     }
 
