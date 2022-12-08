@@ -10,16 +10,19 @@ import java.util.Vector;
  * 坦克大战的绘图区
  */
 public class MyPanel extends JPanel implements KeyListener, Runnable {
-    private final HeroTank heroTank; // 自己的坦克
-    private final Vector<EnemyTank> enemyTanks = new Vector<>(); // 敌人的坦克
-    private final int enemyTankSize = 3; // 敌人坦克的数量
+    private final HeroTank ht; // 自己的坦克
+    private final Vector<EnemyTank> etv = new Vector<>(); // 敌人的坦克
+    private final int ets = 3; // 敌人坦克的数量
 
     public MyPanel() {
-        heroTank = new HeroTank(100, 100, 10); // 初始化自己的坦克
-        for (int i = 0; i < enemyTankSize; i++) { // 初始化敌人的坦克
-            EnemyTank enemyTank = new EnemyTank((i + 1) * 100, 0, 10);
-            enemyTank.setDirect(2); // 设置坦克方向
-            enemyTanks.add(enemyTank);
+        ht = new HeroTank(100, 100, 10); // 初始化自己的坦克
+        for (int i = 0; i < ets; i++) { // 初始化敌人的坦克
+            EnemyTank et = new EnemyTank((i + 1) * 100, 0, 10);
+            et.setDirect(2); // 设置坦克方向
+            Shot shot = new Shot(et.getX() + 20, et.getY() + 60, et.getDirect());
+            et.getShots().add(shot); // 给敌人坦克加入一颗子弹
+            new Thread(shot).start();
+            etv.add(et);
         }
     }
 
@@ -27,15 +30,23 @@ public class MyPanel extends JPanel implements KeyListener, Runnable {
     public void paint(Graphics g) {
         super.paint(g);
         g.fillRect(0, 0, 1000, 750); // 填充矩形，默认黑色
-        drawTank(heroTank.getX(), heroTank.getY(), g, heroTank.getDirect(), 1); // 画自己的坦克
-        for (EnemyTank enemyTank : enemyTanks) { // 画敌人的坦克
-            drawTank(enemyTank.getX(), enemyTank.getY(), g, enemyTank.getDirect(), 0);
+        drawTank(ht.getX(), ht.getY(), g, ht.getDirect(), 1); // 画自己的坦克
+        for (EnemyTank et : etv) { // 画敌人的坦克
+            drawTank(et.getX(), et.getY(), g, et.getDirect(), 0);
+            for (int i = 0; i < et.getShots().size(); i++) { // 画敌人坦克的子弹
+                Shot shot = et.getShots().get(i);
+                if (shot.isLive()) {
+                    drawShot(shot.getX(), shot.getY(), g);
+                } else {
+                    et.getShots().remove(shot); // 删除该子弹
+                }
+            }
         }
 
-        // 画子弹
-        Shot heroShot = heroTank.getShot();
-        if (heroShot != null && heroShot.isLive()) {
-            drawShot(heroShot.getX(), heroShot.getY(), g);
+        // 画出 ht 子弹
+        Shot shot = ht.getShot();
+        if (shot != null && shot.isLive()) {
+            drawShot(shot.getX(), shot.getY(), g);
         }
     }
 
@@ -114,20 +125,20 @@ public class MyPanel extends JPanel implements KeyListener, Runnable {
     public void keyPressed(KeyEvent e) {
         int keyCode = e.getKeyCode();
         if (keyCode == KeyEvent.VK_W) {
-            heroTank.setDirect(0);
-            heroTank.moveUp();
+            ht.setDirect(0);
+            ht.moveUp();
         } else if (keyCode == KeyEvent.VK_D) {
-            heroTank.setDirect(1);
-            heroTank.moveRight();
+            ht.setDirect(1);
+            ht.moveRight();
         } else if (keyCode == KeyEvent.VK_S) {
-            heroTank.setDirect(2);
-            heroTank.moveDown();
+            ht.setDirect(2);
+            ht.moveDown();
         } else if (keyCode == KeyEvent.VK_A) {
-            heroTank.setDirect(3);
-            heroTank.moveLeft();
+            ht.setDirect(3);
+            ht.moveLeft();
         } else if (keyCode == KeyEvent.VK_J) {
             System.out.println("用户按下了J，开始射击");
-            heroTank.shotEnemy();
+            ht.shotEnemy();
         }
 
         repaint();
