@@ -26,28 +26,27 @@ public class MyPanel extends JPanel implements KeyListener, Runnable {
         }
     }
 
-    @Override
-    public void paint(Graphics g) {
-        super.paint(g);
-        g.fillRect(0, 0, 1000, 750); // 填充矩形，默认黑色
-        drawTank(ht.getX(), ht.getY(), g, ht.getDirect(), 1); // 画自己的坦克
-        for (EnemyTank et : etv) { // 画敌人的坦克
-            drawTank(et.getX(), et.getY(), g, et.getDirect(), 0);
-            for (int i = 0; i < et.getShots().size(); i++) { // 画敌人坦克的子弹
-                Shot shot = et.getShots().get(i);
-                if (shot.isLive()) {
-                    drawShot(shot.getX(), shot.getY(), g);
-                } else {
-                    et.getShots().remove(shot); // 删除该子弹
+    public static boolean hitTank(Shot s, EnemyTank et) {
+        switch (et.getDirect()) {
+            case 0: // 上
+            case 2: // 下
+                if (s.getX() > et.getX() && s.getX() < et.getX() + 40
+                        && s.getY() > et.getY() && s.getY() < et.getY() + 60) {
+                    s.setLive(false);
+                    et.setLive(false);
                 }
-            }
+                return true;
+            case 1:
+            case 3:
+                if (s.getX() > et.getX() && s.getX() < et.getX() + 60
+                        && s.getY() > et.getY() && s.getY() < et.getY() + 40) {
+                    s.setLive(false);
+                    et.setLive(false);
+                }
+                return true;
         }
 
-        // 画出 ht 子弹
-        Shot shot = ht.getShot();
-        if (shot != null && shot.isLive()) {
-            drawShot(shot.getX(), shot.getY(), g);
-        }
+        return false;
     }
 
     /**
@@ -112,6 +111,34 @@ public class MyPanel extends JPanel implements KeyListener, Runnable {
     }
 
     @Override
+    public void paint(Graphics g) {
+        super.paint(g);
+        g.fillRect(0, 0, 1000, 750); // 填充矩形，默认黑色
+        drawTank(ht.getX(), ht.getY(), g, ht.getDirect(), 1); // 画自己的坦克
+        for (EnemyTank et : etv) { // 画敌人的坦克
+            if (et.isLive()) {
+                drawTank(et.getX(), et.getY(), g, et.getDirect(), 0);
+                for (int i = 0; i < et.getShots().size(); i++) { // 画敌人坦克的子弹
+                    Shot shot = et.getShots().get(i);
+                    if (shot.isLive()) {
+                        drawShot(shot.getX(), shot.getY(), g);
+                    } else {
+                        et.getShots().remove(shot); // 删除该子弹
+                    }
+                }
+            } /*else {
+                etv.remove(et);
+            }*/
+        }
+
+        // 画出 ht 子弹
+        Shot shot = ht.getShot();
+        if (shot != null && shot.isLive()) {
+            drawShot(shot.getX(), shot.getY(), g);
+        }
+    }
+
+    @Override
     public void keyTyped(KeyEvent e) {
 
     }
@@ -160,6 +187,14 @@ public class MyPanel extends JPanel implements KeyListener, Runnable {
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
+            // 判断是否击中了敌人的坦克
+            if (ht.getShot() != null && ht.getShot().isLive()) {
+                // 遍历所有敌人坦克
+                for (EnemyTank et : etv) {
+                    hitTank(ht.getShot(), et);
+                }
+            }
+
             repaint();
         }
     }

@@ -21,7 +21,7 @@ public class Shot implements Runnable {
      */
     @Override
     public void run() {
-        while (true) {
+        while (isLive) {
             // 休眠 50 毫秒
             try {
                 Thread.sleep(20);
