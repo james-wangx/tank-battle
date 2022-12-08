@@ -8,7 +8,7 @@ public class Shot implements Runnable {
     private int y; // 子弹 y 坐标
     private int direct; // 子弹方向
     private int speed = 5; // 子弹速度
-    private boolean isLive; // 子弹是否存活
+    private boolean isLive = true; // 子弹是否存活
 
     public Shot(int x, int y, int direct) {
         this.x = x;

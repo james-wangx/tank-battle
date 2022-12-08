@@ -36,4 +36,12 @@ public class HeroTank extends Tank {
         // 启动射击线程
         new Thread(shot).start();
     }
+
+    public Shot getShot() {
+        return shot;
+    }
+
+    public void setShot(Shot shot) {
+        this.shot = shot;
+    }
 }

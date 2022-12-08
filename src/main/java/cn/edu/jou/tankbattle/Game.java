@@ -11,6 +11,8 @@ public class Game extends JFrame {
 
     public Game() {
         mp = new MyPanel();
+        Thread thread = new Thread(mp);
+        thread.start(); // 启动重绘线程
         this.add(mp); // 添加面板，也就是游戏的绘图区
         this.setSize(1000, 750);
         this.addKeyListener(mp); // 让 JFrame 监听 mp 的键盘事件

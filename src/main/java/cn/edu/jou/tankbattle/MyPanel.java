@@ -9,7 +9,7 @@ import java.util.Vector;
 /**
  * 坦克大战的绘图区
  */
-public class MyPanel extends JPanel implements KeyListener {
+public class MyPanel extends JPanel implements KeyListener, Runnable {
     private final HeroTank heroTank; // 自己的坦克
     private final Vector<EnemyTank> enemyTanks = new Vector<>(); // 敌人的坦克
     private final int enemyTankSize = 3; // 敌人坦克的数量
@@ -30,6 +30,12 @@ public class MyPanel extends JPanel implements KeyListener {
         drawTank(heroTank.getX(), heroTank.getY(), g, heroTank.getDirect(), 1); // 画自己的坦克
         for (EnemyTank enemyTank : enemyTanks) { // 画敌人的坦克
             drawTank(enemyTank.getX(), enemyTank.getY(), g, enemyTank.getDirect(), 0);
+        }
+
+        // 画子弹
+        Shot heroShot = heroTank.getShot();
+        if (heroShot != null && heroShot.isLive()) {
+            drawShot(heroShot.getX(), heroShot.getY(), g);
         }
     }
 
@@ -89,6 +95,11 @@ public class MyPanel extends JPanel implements KeyListener {
         }
     }
 
+    public void drawShot(int x, int y, Graphics g) {
+        g.setColor(Color.WHITE);
+        g.fill3DRect(x, y, 1, 1, false);
+    }
+
     @Override
     public void keyTyped(KeyEvent e) {
 
@@ -125,5 +136,20 @@ public class MyPanel extends JPanel implements KeyListener {
     @Override
     public void keyReleased(KeyEvent e) {
 
+    }
+
+    /**
+     * 每隔 50 ms，重绘
+     */
+    @Override
+    public void run() {
+        while (true) {
+            try {
+                Thread.sleep(50);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            repaint();
+        }
     }
 }
