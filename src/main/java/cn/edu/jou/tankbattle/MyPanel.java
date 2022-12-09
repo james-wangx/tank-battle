@@ -26,7 +26,7 @@ public class MyPanel extends JPanel implements KeyListener, Runnable {
     public MyPanel() {
         ht = new HeroTank(100, 100, 10); // 初始化自己的坦克
         for (int i = 0; i < ets; i++) { // 初始化敌人的坦克
-            EnemyTank et = new EnemyTank((i + 1) * 100, 0, 10);
+            EnemyTank et = new EnemyTank((i + 1) * 100, 0, 5);
             et.setDirect(2); // 设置坦克方向
             // 启动敌人坦克线程，让它动起来
             new Thread(et).start();
@@ -205,16 +205,24 @@ public class MyPanel extends JPanel implements KeyListener, Runnable {
         int keyCode = e.getKeyCode();
         if (keyCode == KeyEvent.VK_W) {
             ht.setDirect(0);
-            ht.moveUp();
+            if (ht.getY() > 0) {
+                ht.moveUp();
+            }
         } else if (keyCode == KeyEvent.VK_D) {
             ht.setDirect(1);
-            ht.moveRight();
+            if (ht.getX() + 60 < 1000) {
+                ht.moveRight();
+            }
         } else if (keyCode == KeyEvent.VK_S) {
             ht.setDirect(2);
-            ht.moveDown();
+            if (ht.getY() + 60 < 750) {
+                ht.moveDown();
+            }
         } else if (keyCode == KeyEvent.VK_A) {
             ht.setDirect(3);
-            ht.moveLeft();
+            if (ht.getX() > 0) {
+                ht.moveLeft();
+            }
         } else if (keyCode == KeyEvent.VK_J) {
             System.out.println("用户按下了J，开始射击");
             ht.shotEnemy();
