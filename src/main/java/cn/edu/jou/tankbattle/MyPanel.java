@@ -28,6 +28,8 @@ public class MyPanel extends JPanel implements KeyListener, Runnable {
         for (int i = 0; i < ets; i++) { // 初始化敌人的坦克
             EnemyTank et = new EnemyTank((i + 1) * 100, 0, 10);
             et.setDirect(2); // 设置坦克方向
+            // 启动敌人坦克线程，让它动起来
+            new Thread(et).start();
             Shot shot = new Shot(et.getX() + 20, et.getY() + 60, et.getDirect());
             et.getShots().add(shot); // 给敌人坦克加入一颗子弹
             new Thread(shot).start();
