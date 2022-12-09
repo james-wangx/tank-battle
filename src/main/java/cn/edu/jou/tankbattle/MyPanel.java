@@ -12,7 +12,16 @@ import java.util.Vector;
 public class MyPanel extends JPanel implements KeyListener, Runnable {
     private final HeroTank ht; // 自己的坦克
     private final Vector<EnemyTank> etv = new Vector<>(); // 敌人的坦克
+    // 定义一个 Vector 用来存放炸弹
+    // 说明：当子弹击中坦克时，就加入一个 Bomb 对象 到 bombs
+    Vector<Bomb> bombs = new Vector<>();
     private final int ets = 3; // 敌人坦克的数量
+    int drawTimes = 0;
+
+    // 定义三张炸弹图片，用于显示爆炸效果
+    Image image1 = null;
+    Image image2 = null;
+    Image image3 = null;
 
     public MyPanel() {
         ht = new HeroTank(100, 100, 10); // 初始化自己的坦克
@@ -24,9 +33,77 @@ public class MyPanel extends JPanel implements KeyListener, Runnable {
             new Thread(shot).start();
             etv.add(et);
         }
+        // 初始化图片对象
+        image1 = Toolkit.getDefaultToolkit().getImage(Panel.class.getResource("/bomb_1.gif"));
+        image2 = Toolkit.getDefaultToolkit().getImage(Panel.class.getResource("/bomb_2.gif"));
+        image3 = Toolkit.getDefaultToolkit().getImage(Panel.class.getResource("/bomb_3.gif"));
     }
 
-    public static boolean hitTank(Shot s, EnemyTank et) {
+    @Override
+    public void paint(Graphics g) {
+        super.paint(g);
+        g.fillRect(0, 0, 1000, 750); // 填充矩形，默认黑色
+        drawTank(ht.getX(), ht.getY(), g, ht.getDirect(), 1); // 画自己的坦克
+
+        // 画敌人的坦克
+        for (int i = 0; i < etv.size(); i++) {
+            EnemyTank et = etv.get(i);
+            if (et.isLive()) {
+                drawTank(et.getX(), et.getY(), g, et.getDirect(), 0);
+                for (int j = 0; j < et.getShots().size(); j++) { // 画敌人坦克的子弹
+                    Shot shot = et.getShots().get(j);
+                    if (shot.isLive()) {
+                        drawShot(shot.getX(), shot.getY(), g);
+                    } else {
+                        et.getShots().remove(shot); // 删除该子弹
+                    }
+                }
+            } else {
+                etv.remove(et);
+            }
+        }
+
+        // 画出 ht 子弹
+        Shot shot = ht.getShot();
+        if (shot != null && shot.isLive()) {
+            drawShot(shot.getX(), shot.getY(), g);
+        }
+
+        // 如果 bombs 集合中有对象，就画出
+        for (int i = 0; i < bombs.size(); i++) {
+            // 取出炸弹
+            Bomb bomb = bombs.get(i);
+            // 根据当前这个 bomb 对象的 life 值去画出对应的图片
+            if (bomb.life > 6) {
+                g.drawImage(image1, bomb.x, bomb.y, 60, 60, this);
+            } else if (bomb.life > 3) {
+                g.drawImage(image2, bomb.x, bomb.y, 60, 60, this);
+            } else if (bomb.life > 0) {
+                g.drawImage(image3, bomb.x, bomb.y, 60, 60, this);
+            }
+            /*
+             * 第一次调用 drawImage 会自动调两次 paint，这样就导致调用一次 drawImage 相当于调用了三次
+             * 如果是第一次打中敌人，就会迅速调用三次 drawImage ，不会等待线程休眠，从而导致看不到爆炸效果
+             * 设置 drawTimes 可以解决该问题，第一次击中敌人时会连续画九次
+             * 所以设置当 drawTimes <= 9 时，每次延迟 50 ms
+             */
+            if (++drawTimes <= 9) {
+                try {
+                    Thread.sleep(50);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            // 让炸弹的生命值减少
+            bomb.lifeDown();
+            // 如果 bomb life 为 0，就从 bombs 集合中删除
+            if (!bomb.isLive) {
+                bombs.remove(bomb);
+            }
+        }
+    }
+
+    public void hitTank(Shot s, EnemyTank et) {
         switch (et.getDirect()) {
             case 0: // 上
             case 2: // 下
@@ -34,8 +111,11 @@ public class MyPanel extends JPanel implements KeyListener, Runnable {
                         && s.getY() > et.getY() && s.getY() < et.getY() + 60) {
                     s.setLive(false);
                     et.setLive(false);
+                    // 加入一个 Bomb 对象 到 bombs
+                    Bomb bomb = new Bomb(et.getX(), et.getY());
+                    bombs.add(bomb);
                 }
-                return true;
+                break;
             case 1:
             case 3:
                 if (s.getX() > et.getX() && s.getX() < et.getX() + 60
@@ -43,10 +123,8 @@ public class MyPanel extends JPanel implements KeyListener, Runnable {
                     s.setLive(false);
                     et.setLive(false);
                 }
-                return true;
+                break;
         }
-
-        return false;
     }
 
     /**
@@ -111,34 +189,6 @@ public class MyPanel extends JPanel implements KeyListener, Runnable {
     }
 
     @Override
-    public void paint(Graphics g) {
-        super.paint(g);
-        g.fillRect(0, 0, 1000, 750); // 填充矩形，默认黑色
-        drawTank(ht.getX(), ht.getY(), g, ht.getDirect(), 1); // 画自己的坦克
-        for (EnemyTank et : etv) { // 画敌人的坦克
-            if (et.isLive()) {
-                drawTank(et.getX(), et.getY(), g, et.getDirect(), 0);
-                for (int i = 0; i < et.getShots().size(); i++) { // 画敌人坦克的子弹
-                    Shot shot = et.getShots().get(i);
-                    if (shot.isLive()) {
-                        drawShot(shot.getX(), shot.getY(), g);
-                    } else {
-                        et.getShots().remove(shot); // 删除该子弹
-                    }
-                }
-            } /*else {
-                etv.remove(et);
-            }*/
-        }
-
-        // 画出 ht 子弹
-        Shot shot = ht.getShot();
-        if (shot != null && shot.isLive()) {
-            drawShot(shot.getX(), shot.getY(), g);
-        }
-    }
-
-    @Override
     public void keyTyped(KeyEvent e) {
 
     }
@@ -190,11 +240,11 @@ public class MyPanel extends JPanel implements KeyListener, Runnable {
             // 判断是否击中了敌人的坦克
             if (ht.getShot() != null && ht.getShot().isLive()) {
                 // 遍历所有敌人坦克
-                for (EnemyTank et : etv) {
+                for (int i = 0; i < etv.size(); i++) {
+                    EnemyTank et = etv.get(i);
                     hitTank(ht.getShot(), et);
                 }
             }
-
             repaint();
         }
     }
