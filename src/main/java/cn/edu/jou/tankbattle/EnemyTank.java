@@ -33,10 +33,12 @@ public class EnemyTank extends Tank implements Runnable {
         isLive = live;
     }
 
+    /**
+     * 随机产生方向，让坦克朝一个方向移动 30 次，然后换一个方向继续
+     */
     @Override
     public void run() {
         while (isLive) {
-            // 根据坦克的方向来继续移动
             switch (getDirect()) {
                 case 0:
                     // 让坦克保持一个方向，走 30 步
@@ -90,7 +92,7 @@ public class EnemyTank extends Tank implements Runnable {
                     break;
             }
 
-            // 然后随机改变方向 0 - 3
+            // 随机改变方向
             setDirect((int) (Math.random() * 4));
         }
     }

@@ -1,13 +1,13 @@
 package cn.edu.jou.tankbattle;
 
 /**
- * 发射子弹
+ * 射击线程
  */
 public class Shot implements Runnable {
     private int x; // 子弹 x 坐标
     private int y; // 子弹 y 坐标
     private int direct; // 子弹方向
-    private int speed = 5; // 子弹速度
+    private int speed = 10; // 子弹速度
     private boolean isLive = true; // 子弹是否存活
 
     public Shot(int x, int y, int direct) {
@@ -17,14 +17,14 @@ public class Shot implements Runnable {
     }
 
     /**
-     * 射击行为
+     * 根据方向控制子弹移动，每隔 50 ms 移动一定的距离
      */
     @Override
     public void run() {
         while (isLive) {
             // 休眠 50 毫秒
             try {
-                Thread.sleep(20);
+                Thread.sleep(50);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
