@@ -218,7 +218,7 @@ public class MyPanel extends JPanel implements KeyListener, Runnable {
     public void drawHeroShots(Graphics g) {
         for (int i = 0; i < ht.shots.size(); i++) {
             Shot shot = ht.shots.get(i);
-            if (shot != null && shot.isLive()) {
+            if (shot.isLive()) {
                 drawShot(shot.getX(), shot.getY(), g);
             } else {
                 ht.shots.remove(shot); // 删除该子弹

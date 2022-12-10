@@ -39,6 +39,26 @@ public class EnemyTank extends Tank implements Runnable {
     @Override
     public void run() {
         while (isLive) {
+            // 如果没有子弹，再加入一颗子弹，并发射
+            if (shots.size() == 0) {
+                Shot shot = null;
+                switch (getDirect()) {
+                    case 0:
+                        shot = new Shot(getX() + 20, getY(), 0);
+                        break;
+                    case 1:
+                        shot = new Shot(getX() + 60, getY() + 20, 1);
+                        break;
+                    case 2:
+                        shot = new Shot(getX() + 20, getY() + 60, 2);
+                        break;
+                    case 3:
+                        shot = new Shot(getX(), getY() + 20, 3);
+                        break;
+                }
+                shots.add(shot);
+                new Thread(shot).start();
+            }
             switch (getDirect()) {
                 case 0:
                     // 让坦克保持一个方向，走 30 步
@@ -91,7 +111,6 @@ public class EnemyTank extends Tank implements Runnable {
                     }
                     break;
             }
-
             // 随机改变方向
             setDirect((int) (Math.random() * 4));
         }
