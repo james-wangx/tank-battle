@@ -6,8 +6,7 @@ import java.util.Vector;
  * 敌人的坦克
  */
 public class EnemyTank extends Tank implements Runnable {
-    private Vector<Shot> shots = new Vector<>();
-    private boolean isLive = true;
+    Vector<Shot> shots = new Vector<>();
 
     public EnemyTank(int x, int y) {
         super(x, y);
@@ -15,22 +14,6 @@ public class EnemyTank extends Tank implements Runnable {
 
     public EnemyTank(int x, int y, int speed) {
         super(x, y, speed);
-    }
-
-    public Vector<Shot> getShots() {
-        return shots;
-    }
-
-    public void setShots(Vector<Shot> shots) {
-        this.shots = shots;
-    }
-
-    public boolean isLive() {
-        return isLive;
-    }
-
-    public void setLive(boolean live) {
-        isLive = live;
     }
 
     /**

@@ -5,6 +5,7 @@ public class Tank {
     private int y; // 坦克的纵坐标
     private int speed; // 坦克的速度
     private int direct; // 坦克的方向 0 上，1 右，2 下，3 左
+    boolean isLive = true;
 
     public Tank(int x, int y) {
         this.x = x;

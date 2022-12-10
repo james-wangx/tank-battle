@@ -8,7 +8,7 @@ import java.util.Vector;
 public class HeroTank extends Tank {
     // 可以发射多颗子弹
     Vector<Shot> shots = new Vector<>();
-    private Shot shot; // 一颗子弹
+    Shot shot; // 一颗子弹
 
     public HeroTank(int x, int y) {
         super(x, y);
@@ -46,13 +46,5 @@ public class HeroTank extends Tank {
         shots.add(shot);
         // 启动射击线程
         new Thread(shot).start();
-    }
-
-    public Shot getShot() {
-        return shot;
-    }
-
-    public void setShot(Shot shot) {
-        this.shot = shot;
     }
 }
