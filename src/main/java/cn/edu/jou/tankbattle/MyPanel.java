@@ -27,6 +27,7 @@ public class MyPanel extends JPanel implements KeyListener, Runnable {
      * 初始化面板，进行一系列初始化操作
      */
     public MyPanel() {
+        Recorder.setEnemyTanks(etv);
         // 初始化自己的坦克
         ht = new HeroTank(100, 600, 10);
 
