@@ -4,6 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.IOException;
 import java.util.Vector;
 
 /**
@@ -12,6 +13,7 @@ import java.util.Vector;
 public class MyPanel extends JPanel implements KeyListener, Runnable {
     HeroTank ht; // 自己的坦克
     Vector<EnemyTank> etv = new Vector<>(); // 敌人的坦克
+    Vector<Node> nodes = new Vector<>();
     // 定义一个 Vector 用来存放炸弹
     // 说明：当子弹击中坦克时，就加入一个 Bomb 对象 到 bombs
     Vector<Bomb> bombs = new Vector<>();
@@ -26,26 +28,43 @@ public class MyPanel extends JPanel implements KeyListener, Runnable {
     /**
      * 初始化面板，进行一系列初始化操作
      */
-    public MyPanel() {
+    public MyPanel(String key) throws IOException {
         Recorder.setEnemyTanks(etv);
         // 初始化自己的坦克
         ht = new HeroTank(100, 600, 10);
-
-        // 根据敌人坦克数量，初始化敌人坦克
-        for (int i = 0; i < ets; i++) {
-            EnemyTank et = new EnemyTank((i + 1) * 100, 0, 5);
-            et.setEnemyTanks(etv);
-            // 坦克默认方向向下
-            et.setDirect(2);
-            // 启动敌人坦克线程，让它动起来
-            new Thread(et).start();
-            // 给坦克加入一颗子弹，并立即发射
-            Shot shot = new Shot(et.getX() + 20, et.getY() + 60, et.getDirect());
-            et.shots.add(shot);
-            new Thread(shot).start();
-            etv.add(et);
+        if (key.equals("1")) {
+            // 根据敌人坦克数量，初始化敌人坦克
+            for (int i = 0; i < ets; i++) {
+                EnemyTank et = new EnemyTank((i + 1) * 100, 0, 5);
+                et.setEnemyTanks(etv);
+                // 坦克默认方向向下
+                et.setDirect(2);
+                // 启动敌人坦克线程，让它动起来
+                new Thread(et).start();
+                // 给坦克加入一颗子弹，并立即发射
+                Shot shot = new Shot(et.getX() + 20, et.getY() + 60, et.getDirect());
+                et.shots.add(shot);
+                new Thread(shot).start();
+                etv.add(et);
+            }
+        } else if (key.equals("2")) {
+            nodes = Recorder.getNodesAndEnemyTankRec();
+            // 根据敌人坦克数量，初始化敌人坦克
+            for (int i = 0; i < nodes.size(); i++) {
+                Node node = nodes.get(i);
+                EnemyTank et = new EnemyTank(node.getX(), node.getY(), 5);
+                et.setEnemyTanks(etv);
+                // 坦克默认方向向下
+                et.setDirect(node.getDirect());
+                // 启动敌人坦克线程，让它动起来
+                new Thread(et).start();
+                // 给坦克加入一颗子弹，并立即发射
+                Shot shot = new Shot(et.getX() + 20, et.getY() + 60, et.getDirect());
+                et.shots.add(shot);
+                new Thread(shot).start();
+                etv.add(et);
+            }
         }
-
         // 初始化图片对象
         image1 = Toolkit.getDefaultToolkit().getImage(Panel.class.getResource("/bomb_1.gif"));
         image2 = Toolkit.getDefaultToolkit().getImage(Panel.class.getResource("/bomb_2.gif"));

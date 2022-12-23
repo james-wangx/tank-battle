@@ -1,8 +1,6 @@
 package cn.edu.jou.tankbattle;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.util.Vector;
 
 /**
@@ -12,6 +10,7 @@ public class Recorder {
     private static int allEnemyTankNum = 0;
     private static String recordFile = "src/record.txt";
     private static Vector<EnemyTank> enemyTanks = null;
+    private static Vector<Node> nodes = new Vector<>();
 
     public static void keepRecord() throws IOException {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(recordFile))) {
@@ -27,6 +26,20 @@ public class Recorder {
                 }
             }
         }
+    }
+
+    public static Vector<Node> getNodesAndEnemyTankRec() throws IOException {
+        try (BufferedReader br = new BufferedReader(new FileReader(recordFile))) {
+            allEnemyTankNum = Integer.parseInt(br.readLine());
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] xyd = line.split(" ");
+                Node node = new Node(Integer.parseInt(xyd[0]), Integer.parseInt(xyd[1]), Integer.parseInt(xyd[2]));
+                nodes.add(node);
+            }
+        }
+
+        return nodes;
     }
 
     public static void setEnemyTanks(Vector<EnemyTank> enemyTanks) {

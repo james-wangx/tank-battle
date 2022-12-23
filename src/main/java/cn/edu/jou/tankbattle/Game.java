@@ -4,16 +4,13 @@ import javax.swing.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
+import java.util.Scanner;
 
 public class Game extends JFrame {
     MyPanel mp; // 定义 MyPanel
 
-    public static void main(String[] args) {
-        new Game();
-    }
-
-    public Game() {
-        mp = new MyPanel();
+    public Game(String key) throws IOException {
+        mp = new MyPanel(key);
         Thread thread = new Thread(mp);
         thread.start(); // 启动重绘线程
         this.add(mp); // 添加面板，也就是游戏的绘图区
@@ -33,5 +30,11 @@ public class Game extends JFrame {
                 System.exit(0);
             }
         });
+    }
+
+    public static void main(String[] args) throws IOException {
+        System.out.println("请输入选择 1：新游戏 2：继续上局");
+        String key = new Scanner(System.in).next();
+        new Game(key);
     }
 }

@@ -3,7 +3,7 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 
-record.txt
+src/record.txt
 
 ### IntelliJ IDEA ###
 .idea/modules.xml
