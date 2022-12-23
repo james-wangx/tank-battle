@@ -15,7 +15,7 @@ public class MyPanel extends JPanel implements KeyListener, Runnable {
     // 定义一个 Vector 用来存放炸弹
     // 说明：当子弹击中坦克时，就加入一个 Bomb 对象 到 bombs
     Vector<Bomb> bombs = new Vector<>();
-    int ets = 6; // 敌人坦克的数量
+    int ets = 3; // 敌人坦克的数量
     int drawTimes = 0; // 调用 drawImage 方法的次数
 
     // 定义三张炸弹图片，用于显示爆炸效果
@@ -69,6 +69,23 @@ public class MyPanel extends JPanel implements KeyListener, Runnable {
         drawHeroShots(g);
         // 绘制爆炸效果
         drawBombs(g);
+        showInfo(g);
+    }
+
+    /**
+     * 显示游戏信息
+     *
+     * @param g 画笔
+     */
+    public void showInfo(Graphics g) {
+        // 画出玩家的总成绩
+        g.setColor(Color.black);
+        Font font = new Font("STKaiTi", Font.BOLD, 25);
+        g.setFont(font);
+        g.drawString("您累计击毁敌方坦克", 1020, 30);
+        drawTank(1020, 60, g, 0, 0);
+        g.setColor(Color.black);
+        g.drawString(Recorder.getAllEnemyTankNum() + "", 1080, 100);
     }
 
     /**
@@ -85,6 +102,9 @@ public class MyPanel extends JPanel implements KeyListener, Runnable {
                         && s.getY() > tank.getY() && s.getY() < tank.getY() + 60) {
                     s.setLive(false);
                     tank.isLive = false;
+                    if (tank instanceof EnemyTank) {
+                        Recorder.addAllEnemyTankNum();
+                    }
                     // 加入一个 Bomb 对象 到 bombs
                     Bomb bomb = new Bomb(tank.getX(), tank.getY());
                     bombs.add(bomb);
@@ -96,6 +116,9 @@ public class MyPanel extends JPanel implements KeyListener, Runnable {
                         && s.getY() > tank.getY() && s.getY() < tank.getY() + 40) {
                     s.setLive(false);
                     tank.isLive = false;
+                    if (tank instanceof EnemyTank) {
+                        Recorder.addAllEnemyTankNum();
+                    }
                     Bomb bomb = new Bomb(tank.getX(), tank.getY());
                     bombs.add(bomb);
                 }
