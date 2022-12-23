@@ -4,6 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.File;
 import java.io.IOException;
 import java.util.Vector;
 
@@ -32,6 +33,10 @@ public class MyPanel extends JPanel implements KeyListener, Runnable {
         Recorder.setEnemyTanks(etv);
         // 初始化自己的坦克
         ht = new HeroTank(100, 600, 10);
+        File file = new File(Recorder.getRecordFile());
+        if (!file.exists()) {
+            key = "1";
+        }
         if (key.equals("1")) {
             // 根据敌人坦克数量，初始化敌人坦克
             for (int i = 0; i < ets; i++) {
@@ -69,6 +74,8 @@ public class MyPanel extends JPanel implements KeyListener, Runnable {
         image1 = Toolkit.getDefaultToolkit().getImage(Panel.class.getResource("/bomb_1.gif"));
         image2 = Toolkit.getDefaultToolkit().getImage(Panel.class.getResource("/bomb_2.gif"));
         image3 = Toolkit.getDefaultToolkit().getImage(Panel.class.getResource("/bomb_3.gif"));
+
+        new AePlayWave("src/bgm.wav").start();
     }
 
     /**
